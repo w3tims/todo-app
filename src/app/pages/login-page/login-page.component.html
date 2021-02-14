@@ -1,1 +1,15 @@
-<p>login-page works!</p>
+<form class="login-form" [formGroup]="emailLoginForm" (submit)="emailLoginFormSubmit()">
+    <mat-form-field class="example-full-width">
+        <mat-label>Email</mat-label>
+        <input formControlName="email" matInput placeholder="example@gmail.com">
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <mat-label>Password</mat-label>
+        <input formControlName="password" type="password" matInput>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button color="primary">Log in</button>
+
+    <button type="button" mat-raised-button color="accent">Log in with Google</button>
+</form>

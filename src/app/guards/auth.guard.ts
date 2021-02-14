@@ -19,10 +19,10 @@ export class AuthGuard implements CanLoad {
     segments: UrlSegment[]
   ): Observable<boolean> | Promise<boolean> | boolean {
 
-    if (!this.fireAuth.auth.currentUser) {
-      this.router.navigateByUrl(`/${RouteEnum.Login}`);
-      return false;
-    }
+    // if (!this.fireAuth.auth.currentUser) {
+    //   this.router.navigateByUrl(`/${RouteEnum.Login}`);
+    //   return false;
+    // }
 
     return true;
   }

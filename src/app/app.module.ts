@@ -13,6 +13,9 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { TasksState } from './state/tasks/tasks.state';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatTabsModule } from '@angular/material/tabs';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -31,6 +34,10 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
     }),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot(),
+    BrowserAnimationsModule,
+
+    MatTabsModule,
+    RouterModule,
   ],
   providers: [
     AngularFirestore,

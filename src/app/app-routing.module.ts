@@ -26,11 +26,11 @@ const routes: Routes = [
       }
     ],
   },
-  {
-    path: '**',
-    redirectTo: RouteEnum.Dashboard,
-    pathMatch: 'full',
-  }
+  // {
+  //   path: '**',
+  //   redirectTo: RouteEnum.Dashboard,
+  //   pathMatch: 'full',
+  // }
 ];
 
 @NgModule({

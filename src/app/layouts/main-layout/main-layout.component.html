@@ -1,5 +1,11 @@
-<header>
-    <nav [routerLink]="route.Dashboard">Dashboard</nav>
-    <nav [routerLink]="route.Todo">Todo</nav>
-</header>
+<nav mat-tab-nav-bar>
+  <nav
+    *ngFor="let link of links"
+    routerLinkActive
+    #rla="routerLinkActive"
+    [active]="rla.isActive"
+    mat-tab-link
+    [routerLink]="link.url"
+  >{{link.title}}</nav>
+</nav>
 <router-outlet></router-outlet>
