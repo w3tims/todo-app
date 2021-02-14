@@ -8,6 +8,10 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 
 import { environment } from '../environments/environment';
+import { NgxsModule } from '@ngxs/store';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { TasksState } from './state/tasks/tasks.state';
 
 @NgModule({
   declarations: [
@@ -20,6 +24,11 @@ import { environment } from '../environments/environment';
       environment.firebaseConfig,
       environment.firestoreAppName
     ),
+    NgxsModule.forRoot([TasksState], {
+      developmentMode: !environment.production
+    }),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    NgxsLoggerPluginModule.forRoot(),
   ],
   providers: [
     AngularFirestore,
