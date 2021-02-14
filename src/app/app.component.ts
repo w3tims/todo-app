@@ -4,6 +4,8 @@ import { first, map, tap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import * as firebase from 'firebase';
 import Timestamp = firebase.firestore.Timestamp;
+import { AngularFireAuth } from '@angular/fire/auth';
+import { auth } from 'firebase';
 
 interface ITaskCreationData {
   text: string;
@@ -33,9 +35,24 @@ export class AppComponent implements OnInit {
   };
 
   constructor(
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private fireAuth: AngularFireAuth,
   ) {
 
+  }
+
+
+  ngOnInit() {
+
+    // return this.updateUserData(credential.user);
+  }
+
+  startAuth() {
+    const googleProvider = new auth.GoogleAuthProvider();
+    const emailProvider = new auth.EmailAuthProvider();
+    from(this.fireAuth.auth.signInWithPopup(googleProvider)).subscribe(
+      authResult => console.log(authResult)
+    );
   }
 
   addSampleTask() {
@@ -60,7 +77,7 @@ export class AppComponent implements OnInit {
       .subscribe();
   }
 
-  ngOnInit() {
+  loadTasks() {
     this.firestore.collection(
       'tasks'
     ).snapshotChanges().pipe(
@@ -80,6 +97,6 @@ export class AppComponent implements OnInit {
       first(),
       tap(res => console.log('data:', res))
     ).subscribe();
-
   }
+
 }
