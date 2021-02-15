@@ -23,14 +23,14 @@ const routes: Routes = [
         path: RouteEnum.Todo,
         loadChildren: () => import('./pages/todo-page/todo-page.module').then(m => m.TodoPageModule),
         canLoad: [AuthGuard]
+      },
+      {
+        path: '**',
+        redirectTo: RouteEnum.Dashboard,
+        pathMatch: 'full',
       }
     ],
   },
-  // {
-  //   path: '**',
-  //   redirectTo: RouteEnum.Dashboard,
-  //   pathMatch: 'full',
-  // }
 ];
 
 @NgModule({

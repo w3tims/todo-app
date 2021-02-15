@@ -1,1 +1,9 @@
-<p>dashboard-page works!</p>
+<mat-card>
+  <p>Total tasks: <strong>{{tasksTotal$ | async}}</strong></p>
+</mat-card>
+<mat-card>
+  <p>Open tasks: <strong>{{tasksOpen$ | async}}</strong></p>
+</mat-card>
+<mat-card>
+  <p>Closed tasks: <strong>{{tasksClosed$ | async}}</strong></p>
+</mat-card>

@@ -1,4 +1,5 @@
 import { ITask } from '../typings/interfaces/task.interface';
+import { TaskSortField } from '../typings/enums/task-sort-field.enum';
 
 export class CreateTask {
   static readonly type = '[Tasks] Create';
@@ -19,7 +20,7 @@ export class DeleteTask {
   constructor(public id: string) {}
 }
 
-export class SetSelectedTask {
-  static readonly type = '[Tasks] Set';
-  constructor(public payload: ITask) {}
+export class SetSortField {
+  static readonly type = '[Tasks] Set Sort Field';
+  constructor(public payload: TaskSortField) {}
 }

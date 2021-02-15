@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
+import { TasksState } from '../../state/tasks/tasks.state';
+import { Observable } from 'rxjs';
+import { LoadTasks } from '../../actions/tasks.actions';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -7,9 +11,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardPageComponent implements OnInit {
 
-  constructor() { }
+  @Select(TasksState.getTasksTotalCount) tasksTotal$: Observable<number>;
+  @Select(TasksState.getTasksOpenCount) tasksOpen$: Observable<number>;
+  @Select(TasksState.getTasksClosedCount) tasksClosed$: Observable<number>;
 
-  ngOnInit(): void {
+  constructor(
+    private store: Store
+  ) { }
+
+  ngOnInit() {
+    this.store.dispatch(LoadTasks);
   }
 
+  stringify(arg: any) {
+    return String(arg);
+  }
 }

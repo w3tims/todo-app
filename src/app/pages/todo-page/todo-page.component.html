@@ -1,1 +1,22 @@
-<p>todo-page works!</p>
+<mat-card class="action-bar">
+  <button class="create-task-button" type="button" mat-raised-button color="primary" (click)="createTaskPopup()">New task</button>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Sorting</mat-label>
+    <mat-select [value]="sortField$ | async" (valueChange)="setSortField($event)">
+      <mat-option *ngFor="let sortOption of sortOptions" [value]="sortOption.value">
+        {{sortOption.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-card>
+
+<mat-card *ngFor="let task of (tasks$ | async)" class="task-container" (click)="editTaskPopup(task)">
+<!--  TODO use mat-table-->
+  <div>{{task.text}}</div>
+  <div>created: {{task.creationDate.toUTCString()}}</div>
+  <div *ngIf="task.dueDate">due-date: {{toReadableDate(task.dueDate)}}</div>
+
+
+  <mat-icon aria-hidden="false" (click)="deleteTask(task); $event.stopPropagation()">delete</mat-icon>
+</mat-card>

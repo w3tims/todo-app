@@ -1,35 +1,87 @@
-import {State, Action, StateContext, Selector} from '@ngxs/store';
-import {tap} from 'rxjs/operators';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { tap } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
 import { ITask } from '../../typings/interfaces/task.interface';
-import { CreateTask, DeleteTask, LoadTasks, SetSelectedTask, UpdateTask } from '../../actions/tasks.actions';
+import { CreateTask, DeleteTask, LoadTasks, SetSortField, UpdateTask } from '../../actions/tasks.actions';
 import { Injectable } from '@angular/core';
+import { TaskSortField } from '../../typings/enums/task-sort-field.enum';
 
 export class TasksStateModel {
   tasks: ITask[];
-  selectedTask: ITask;
+  sortField: TaskSortField;
+  // tasksLoading: boolean;
+  // tasksLoadSuccess: boolean;
+  // tasksLoadError: any;
+  //
+  // taskUpdating: boolean;
+  // taskUpdateSuccess: boolean;
+  // taskUpdateError: any;
+  //
+  // taskDeleting: boolean;
+  // taskDeleteSuccess: boolean;
+  // taskDeleteError: any;
+
+  // selectedTask: ITask;
+  // createPopupOpen: boolean;
 }
 
 @State<TasksStateModel>({
   name: 'tasks',
   defaults: {
     tasks: [],
-    selectedTask: null
+    sortField: TaskSortField.CreationDate,
+    // tasksLoading: false,
+    // tasksLoadSuccess: false,
+    // tasksLoadError: null,
+    //
+    // taskUpdating: false,
+    // taskUpdateSuccess: false,
+    // taskUpdateError: null,
+    //
+    // taskDeleting: false,
+    // taskDeleteSuccess: false,
+    // taskDeleteError: null,
+
+    // selectedTask: null,
+    // createPopupOpen: false
   }
 })
 @Injectable()
 export class TasksState {
 
-  constructor(private tasksService: TasksService) {}
+  constructor(
+    private tasksService: TasksService
+  ) {}
 
   @Selector()
   static getTasks(state: TasksStateModel) {
-    return state.tasks;
+    const sortField = state.sortField;
+    const tasks =  [ ...state.tasks ];
+    return tasks.sort((task1, task2) => {
+      const date1 = +new Date(task1[sortField]);
+      const date2 = +new Date(task2[sortField]);
+      return date1 - date2;
+    });
   }
 
   @Selector()
-  static getSelectedTask(state: TasksStateModel) {
-    return state.selectedTask;
+  static getSortField(state: TasksStateModel) {
+    return  state.sortField;
+  }
+
+  @Selector()
+  static getTasksTotalCount(state: TasksStateModel) {
+    return state.tasks.length;
+  }
+
+  @Selector()
+  static getTasksOpenCount(state: TasksStateModel) {
+    return state.tasks.filter(task => !task.closed).length;
+  }
+
+  @Selector()
+  static getTasksClosedCount(state: TasksStateModel) {
+    return state.tasks.filter(task => task.closed).length;
   }
 
   @Action(LoadTasks)
@@ -90,12 +142,12 @@ export class TasksState {
       );
   }
 
-  @Action(SetSelectedTask)
-  setSelectedTodoId({getState, setState}: StateContext<TasksStateModel>, {payload}: SetSelectedTask) {
+  @Action(SetSortField)
+  setSortField({getState, setState}: StateContext<TasksStateModel>, {payload}: SetSortField) {
     const state = getState();
     setState({
       ...state,
-      selectedTask: payload
+      sortField: payload
     });
   }
 }

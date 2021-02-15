@@ -1,0 +1,26 @@
+<form class="task-form" [formGroup]="taskForm" (submit)="taskFormSubmit()">
+  <mat-form-field class="example-full-width">
+    <mat-label>Text</mat-label>
+    <input formControlName="text" matInput placeholder="Type something...">
+  </mat-form-field>
+
+
+  <mat-form-field appearance="fill">
+    <mat-label>Due Date</mat-label>
+    <input formControlName="dueDate" matInput [matDatepicker]="picker">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Other</mat-label>
+    <textarea formControlName="other" matInput placeholder="Type something..."></textarea>
+  </mat-form-field>
+
+  <mat-checkbox
+    formControlName="closed"
+    [labelPosition]="'after'"
+  >Closed</mat-checkbox>
+
+  <button class="submit-button" type="submit" mat-raised-button color="primary">Save</button>
+</form>

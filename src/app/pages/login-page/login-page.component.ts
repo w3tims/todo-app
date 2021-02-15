@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { auth } from 'firebase';
 import { from } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouteEnum } from '../../typings/enums/route.enum';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login-page',
@@ -21,6 +22,8 @@ export class LoginPageComponent implements OnInit {
   constructor(
     private fireAuth: AngularFireAuth,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private ngZone: NgZone,
   ) { }
 
   ngOnInit(): void {
@@ -33,8 +36,21 @@ export class LoginPageComponent implements OnInit {
     }
     const { email, password } = this.emailLoginForm.value;
     this.fireAuth.auth.signInWithEmailAndPassword(email, password).then(
-      next => { this.router.navigateByUrl(`/${RouteEnum.Dashboard}`); },
-      err => {},
+      () => this.router.navigateByUrl(`/${RouteEnum.Dashboard}`),
     );
+  }
+
+  redirectToGoogleLogin() {
+    const googleProvider = new auth.GoogleAuthProvider();
+    from(this.fireAuth.auth.signInWithPopup(googleProvider))
+      .pipe(
+        tap(() => {
+          // uh-oh
+          this.ngZone.run(() => {
+            this.router.navigateByUrl(`/${RouteEnum.Dashboard}`);
+          });
+        })
+      )
+      .subscribe();
   }
 }

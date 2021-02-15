@@ -1,6 +1,6 @@
 export interface ITaskCreate {
     text: string;
-    dueDate?: number;
+    dueDate?: Date;
     other?: string;
     closed: boolean;
 }

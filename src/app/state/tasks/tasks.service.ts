@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ITask } from '../../typings/interfaces/task.interface';
-import { first, map, mapTo, tap } from 'rxjs/operators';
+import { first, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
 import { ITaskServer } from '../../typings/interfaces/task-server.interface';
 import { ITaskCreate } from '../../typings/interfaces/task-create.interface';
+import * as firebase from 'firebase';
+import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 
 @Injectable({
   providedIn: 'root'
@@ -38,19 +40,16 @@ export class TasksService {
   }
 
   createTask(task: ITaskCreate): Observable<ITask> {
+
     return from(this.firestore.collection('tasks')
-      .add(task))
+      .add({ ...task, creationDate: firebase.firestore.FieldValue.serverTimestamp() }))
       .pipe(
-        map((documentReference) => {
-          // TODO consider using switchMap to retrieve newly-created item from server
-          //  with more precise creationDate but with drawback of +1 backend call
-          const creationDate = new Date();
-          return {
-            ...task,
-            id: documentReference.id,
-            creationDate
-          };
-        }),
+        switchMap(documentReference => from(
+          this.firestore.collection<ITask>('tasks')
+            .doc(documentReference.id).get()
+          )
+        ),
+        map((documentSnapshot: DocumentSnapshot<ITaskServer>) => this.getTaskFromDocumentSnapshot(documentSnapshot)),
         first(),
       );
   }
@@ -72,7 +71,20 @@ export class TasksService {
     return {
       id,
       ...taskServerData,
-      creationDate: taskServerData.creationDate.toDate(),
+      ...taskServerData.creationDate && { creationDate: taskServerData.creationDate.toDate() },
+      ...taskServerData.dueDate && { dueDate: taskServerData.dueDate.toDate() },
+    };
+  }
+
+  private getTaskFromDocumentSnapshot(
+    snapshot: DocumentSnapshot<ITaskServer>
+  ): ITask {
+    const data = snapshot.data();
+    return {
+      id: snapshot.id,
+      ...data,
+      ...data.creationDate && { creationDate: data.creationDate.toDate() },
+      ...data.dueDate && { dueDate: data.dueDate.toDate() }
     };
   }
 
