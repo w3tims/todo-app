@@ -1,5 +1,14 @@
 # TodoApp
 
+node -v
+v12.16.3
+
+npm -v
+6.14.4
+
+`npm i`
+`npm start`
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.12.
 
 ## Development server
