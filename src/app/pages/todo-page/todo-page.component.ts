@@ -3,7 +3,7 @@ import { Select, Store } from '@ngxs/store';
 import { TasksState } from '../../state/tasks/tasks.state';
 import { Observable } from 'rxjs';
 import { ITask } from '../../typings/interfaces/task.interface';
-import { CreateTask, DeleteTask, LoadTasks, SetSortField, UpdateTask } from '../../actions/tasks.actions';
+import { CreateTask, DeleteTask, LoadTasks, SetSearchText, SetSortField, UpdateTask } from '../../actions/tasks.actions';
 import { MatDialog } from '@angular/material/dialog';
 import { TaskFormComponent } from './task-form/task-form.component';
 import { filter, tap } from 'rxjs/operators';
@@ -18,6 +18,7 @@ export class TodoPageComponent implements OnInit {
 
   @Select(TasksState.getTasks) tasks$: Observable<ITask[]>;
   @Select(TasksState.getSortField) sortField$: Observable<TaskSortField>;
+  @Select(TasksState.getSearchText) searchText$: Observable<string>;
 
   taskFormDialogConfig = {
     width: '320px',
@@ -39,8 +40,18 @@ export class TodoPageComponent implements OnInit {
     private dialog: MatDialog,
   ) { }
 
+
+  ngOnInit() {
+    // TODO move to route-resolvers ?
+    this.store.dispatch(LoadTasks);
+  }
+
   setSortField(newSortField: TaskSortField) {
     this.store.dispatch(new SetSortField(newSortField));
+  }
+
+  setSearchText(newSearchText: any) {
+    this.store.dispatch(new SetSearchText(newSearchText));
   }
 
   createTaskPopup() {
@@ -78,9 +89,5 @@ export class TodoPageComponent implements OnInit {
     return ('0' + dateValue.getDate()).slice(-2) + '.'
       + ('0' + (dateValue.getMonth() + 1)).slice(-2) + '.'
       + dateValue.getFullYear();
-  }
-
-  ngOnInit() {
-    this.store.dispatch(LoadTasks);
   }
 }

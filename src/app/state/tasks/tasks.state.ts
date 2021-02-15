@@ -2,13 +2,14 @@ import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
 import { ITask } from '../../typings/interfaces/task.interface';
-import { CreateTask, DeleteTask, LoadTasks, SetSortField, UpdateTask } from '../../actions/tasks.actions';
+import { CreateTask, DeleteTask, LoadTasks, SetSearchText, SetSortField, UpdateTask } from '../../actions/tasks.actions';
 import { Injectable } from '@angular/core';
 import { TaskSortField } from '../../typings/enums/task-sort-field.enum';
 
 export class TasksStateModel {
   tasks: ITask[];
   sortField: TaskSortField;
+  searchText: string;
   // tasksLoading: boolean;
   // tasksLoadSuccess: boolean;
   // tasksLoadError: any;
@@ -20,9 +21,6 @@ export class TasksStateModel {
   // taskDeleting: boolean;
   // taskDeleteSuccess: boolean;
   // taskDeleteError: any;
-
-  // selectedTask: ITask;
-  // createPopupOpen: boolean;
 }
 
 @State<TasksStateModel>({
@@ -30,6 +28,7 @@ export class TasksStateModel {
   defaults: {
     tasks: [],
     sortField: TaskSortField.CreationDate,
+    searchText: '',
     // tasksLoading: false,
     // tasksLoadSuccess: false,
     // tasksLoadError: null,
@@ -41,9 +40,6 @@ export class TasksStateModel {
     // taskDeleting: false,
     // taskDeleteSuccess: false,
     // taskDeleteError: null,
-
-    // selectedTask: null,
-    // createPopupOpen: false
   }
 })
 @Injectable()
@@ -56,17 +52,29 @@ export class TasksState {
   @Selector()
   static getTasks(state: TasksStateModel) {
     const sortField = state.sortField;
+    const searchText = state.searchText;
     const tasks =  [ ...state.tasks ];
-    return tasks.sort((task1, task2) => {
+    const sortedTasks = tasks.sort((task1, task2) => {
       const date1 = +new Date(task1[sortField]);
       const date2 = +new Date(task2[sortField]);
       return date1 - date2;
     });
+    try {
+      // quickfix of slashes in input ( breaks regex)
+      return sortedTasks.filter(task => task.text.match(searchText));
+    } catch (e) {
+      return [];
+    }
   }
 
   @Selector()
   static getSortField(state: TasksStateModel) {
     return  state.sortField;
+  }
+
+  @Selector()
+  static getSearchText(state: TasksStateModel) {
+    return state.searchText;
   }
 
   @Selector()
@@ -110,7 +118,7 @@ export class TasksState {
   }
 
   @Action(UpdateTask)
-  updateTask({getState, setState}: StateContext<TasksStateModel>, {payload}: UpdateTask) {
+  updateTask({getState, patchState}: StateContext<TasksStateModel>, {payload}: UpdateTask) {
     return this.tasksService.updateTask(payload)
       .pipe(
         tap((result) => {
@@ -118,7 +126,7 @@ export class TasksState {
           const tasks = state.tasks.map(
             task => task.id === payload.id ? result : task
           );
-          setState({
+          patchState({
             ...state,
             tasks,
           });
@@ -128,13 +136,13 @@ export class TasksState {
 
 
   @Action(DeleteTask)
-  deleteTask({getState, setState}: StateContext<TasksStateModel>, {id}: DeleteTask) {
+  deleteTask({getState, patchState}: StateContext<TasksStateModel>, {id}: DeleteTask) {
     return this.tasksService.deleteTask(id)
       .pipe(
         tap(() => {
           const state = getState();
           const tasks = state.tasks.filter(item => item.id !== id);
-          setState({
+          patchState({
             ...state,
             tasks,
           });
@@ -143,11 +151,20 @@ export class TasksState {
   }
 
   @Action(SetSortField)
-  setSortField({getState, setState}: StateContext<TasksStateModel>, {payload}: SetSortField) {
+  setSortField({getState, patchState}: StateContext<TasksStateModel>, {payload}: SetSortField) {
     const state = getState();
-    setState({
+    patchState({
       ...state,
       sortField: payload
+    });
+  }
+
+  @Action(SetSearchText)
+  setSearchText({getState, patchState}: StateContext<TasksStateModel>, {payload}: SetSearchText) {
+    const state = getState();
+    patchState({
+      ...state,
+      searchText: payload
     });
   }
 }

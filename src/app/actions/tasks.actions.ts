@@ -24,3 +24,8 @@ export class SetSortField {
   static readonly type = '[Tasks] Set Sort Field';
   constructor(public payload: TaskSortField) {}
 }
+
+export class SetSearchText {
+  static readonly type = '[Tasks] Set Search Text';
+  constructor(public payload: string) {}
+}

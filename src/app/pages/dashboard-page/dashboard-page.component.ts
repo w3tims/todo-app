@@ -20,6 +20,7 @@ export class DashboardPageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // TODO move to route-resolvers ?
     this.store.dispatch(LoadTasks);
   }
 

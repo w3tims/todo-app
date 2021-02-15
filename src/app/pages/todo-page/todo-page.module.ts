@@ -7,7 +7,7 @@ import { TaskFormComponent } from './task-form/task-form.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -27,6 +27,7 @@ import { MatSelectModule } from '@angular/material/select';
     }]),
 
     MatCardModule,
+    FormsModule,
 
     MatSelectModule,
 

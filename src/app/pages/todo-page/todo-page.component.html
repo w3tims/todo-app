@@ -1,6 +1,11 @@
 <mat-card class="action-bar">
   <button class="create-task-button" type="button" mat-raised-button color="primary" (click)="createTaskPopup()">New task</button>
 
+  <mat-form-field class="example-full-width">
+    <mat-label>Search by text</mat-label>
+    <input [ngModel]="searchText$ | async" (ngModelChange)="setSearchText($event)" matInput placeholder="Search...">
+  </mat-form-field>
+
   <mat-form-field appearance="fill">
     <mat-label>Sorting</mat-label>
     <mat-select [value]="sortField$ | async" (valueChange)="setSortField($event)">
